@@ -1,0 +1,75 @@
+---
+title: "Group2_Analysis"
+author: "Praveen Kumar Pappala, Partha Vemuri, Noureen Mithaigar
+output: html_document
+---
+
+```{r}
+
+# Role 1: Group and prepare data by region
+# Author: Praveen Kumar Pappala
+
+# Load necessary libraries
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+# Load the dataset
+df <- read_csv("C:/Users/chint/Downloads/archive (3)/globalterrorismdb_0718dist.csv")
+
+head(df)
+str(df)
+
+
+# Grouping and summarizing the data by region
+region_summary <- df %>%
+  group_by(region) %>%
+  summarise(
+    total_attacks = n(),
+    avg_killings = mean(nkill, na.rm = TRUE),
+    avg_woundings = mean(nwound, na.rm = TRUE)
+  )
+
+# View the summarized data
+print(region_summary)
+
+```
+
+```{r}
+
+# Role 2: Calculate total fatalities per region
+# Author: Partha Vemuri
+
+# Group and prepare data
+fatalities_by_region <- df %>%
+  group_by(region_txt) %>%
+  summarise(total_fatalities = sum(nkill, na.rm = TRUE)) %>%
+  arrange(desc(total_fatalities))
+
+
+# Printing the result
+print(fatalities_by_region)
+
+```
+
+
+```{r}
+
+# Role 3: Visualize fatalities by region using a bar chart.
+# Author: Noureen Mithaigar
+
+library(scales)
+
+# Bar chart visualization
+ggplot(fatalities_by_region, aes(x = reorder(region_txt, -total_fatalities), y = total_fatalities)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  theme_minimal() +
+  labs(
+    title = "Total Fatalities by Region",
+    x = "Region",
+    y = "Number of Fatalities"
+  ) + scale_y_continuous(labels = comma) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+  
+```
